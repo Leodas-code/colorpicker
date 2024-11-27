@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Picker</title> 
+  <style>
+    /* Body styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #444;
+    }
+
+    p {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    /* Color Picker */
+    #colorInput {
+      width: 50px;
+      height: 50px;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    #colorInput:hover {
+      transform: scale(1.1);
+    }
+
+    /* Buttons Styling */
+    button {
+      padding: 10px 20px;
+      border: none;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s ease-in-out;
+      margin: 10px;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #applyBtn {
+      background-color: #c266d3;
+    }
+
+    #applyBtn:hover {
+      background-color: #a83db3;
+    }
+
+    #resetBtn {
+      background-color: #6dd366;
+    }
+
+    #resetBtn:hover {
+      background-color: #56b654;
+    }
+
+    #save {
+      background-color: #f39c12;
+    }
+
+    #save:hover {
+      background-color: #e67e22;
+    }
+
+    #copy {
+      background-color: #3498db;
+    }
+
+    #copy:hover {
+      background-color: #2980b9;
+    }
+
+    #ranColor {
+      background-color: #9b59b6;
+    }
+
+    #ranColor:hover {
+      background-color: #8e44ad;
+    }
+
+    #downloadImage {
+      background-color: #e74c3c;
+    }
+
+    #downloadImage:hover {
+      background-color: #c0392b;
+    }
+
+    /* Color Code Section */
+    #colorCode {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #333;
+    }
+
+    /* Favorite Colors List */
+    #favoriteColorBox {
+      list-style: none;
+      padding: 0;
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    #favoriteColorBox li {
+      padding: 10px;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s ease-in-out;
+    }
+
+    #favoriteColorBox li:hover {
+      transform: scale(1.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Styling the first "Favorite" item */
+    #favoriteColorBox li:first-child {
+      background-color: #2c3e50;
+      cursor: default;
+    }
+  </style>
+</head>
+<body id="body">
+
+  <h1>Color Picker</h1>
+  <p>Choose a color to change the background:</p>
+  <input type="color" id="colorInput" />
+  <button id="applyBtn">Apply Color</button>
+  <button id="resetBtn">Reset</button>
+  <div id="colorCode">#ffffff</div>
+  <button id="save">Save</button>
+  <button id="copy">Copy HEX code</button>
+  <button id="ranColor">Random Color</button>
+  <button id="downloadImage">Download Color as Image</button>
+  <ul id="favoriteColorBox">
+    <li>Favorite</li>
+  </ul>
+
+  <script>
+    let colorInput = document.getElementById('colorInput');
+    const applyColor = document.getElementById("applyBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const saveBtn = document.getElementById("save");
+    const copyBtn = document.getElementById("copy");
+    const downloadImageBtn = document.getElementById("downloadImage");
+    const body = document.getElementById("body");
+    const RandomColor = document.getElementById("ranColor");
+    const favoriteColorBox = document.getElementById("favoriteColorBox");
+
+    function apply() {
+      let colorValue = colorInput.value;
+      body.style.background = colorValue;
+    }
+
+    function reset() {
+      body.style.background = "white";
+    }
+
+    function save() {
+      let colorValue = colorInput.value;
+      localStorage.setItem("favorite", colorValue);
+      favoriteColorBox.style.backgroundColor = colorValue;
+      display(colorValue);  // Call display with the color value
+    }
+
+    function display(colorValue) {
+      let listItem = document.createElement("li");
+      listItem.textContent = colorValue;
+      listItem.style.backgroundColor = colorValue;
+      favoriteColorBox.appendChild(listItem);
+    }
+
+    function rand() {
+      let RandomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+      body.style.backgroundColor = RandomColor;
+      colorInput.value = RandomColor;
+    }
+
+    function downloadImage() {
+      let colorValue = colorInput.value;
+
+      // Create a canvas element
+      let canvas = document.createElement("canvas");
+      let ctx = canvas.getContext("2d");
+
+      // Set canvas dimensions
+      canvas.width = 100;
+      canvas.height = 100;
+
+      // Fill the canvas with the selected color
+      ctx.fillStyle = colorValue;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Create an image from the canvas data
+      canvas.toBlob(function(blob) {
+        // Create a download link
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "color.png"; // Set the file name
+        link.click(); // Trigger the download
+      });
+    }
+
+    colorInput.addEventListener('input', () => {
+      document.getElementById('colorCode').innerHTML = colorInput.value;
+    });
+
+    copyBtn.addEventListener("click", () => {
+      const hexvalue = colorInput.value;
+      const cb = navigator.clipboard;
+      cb.writeText(hexvalue)
+        .then(() => {
+          alert("HEX code copied");
+        });
+    });
+
+    RandomColor.addEventListener("click", rand);
+    saveBtn.addEventListener("click", save);
+    applyColor.addEventListener("click", apply);
+    resetBtn.addEventListener("click", reset);
+    downloadImageBtn.addEventListener("click", downloadImage);
+  </script>
+</body>
+</html>
